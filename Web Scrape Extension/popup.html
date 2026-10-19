@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopee to Threads Script Generator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="extension-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand-group">
+        <div class="logo-icon">⚡</div>
+        <div class="brand-text">
+          <h1 class="brand-title">Racun Social <span class="badge-ai">Flash AI</span></h1>
+          <p class="brand-subtitle">Shopee to Threads 3-Step</p>
+        </div>
+      </div>
+      <button id="btnSettingsToggle" class="btn-icon" title="Tetapan API Key">
+        ⚙️
+      </button>
+    </header>
+
+    <!-- Drawer Tetapan API (Boleh Buka/Tutup) -->
+    <section id="settingsDrawer" class="settings-drawer hidden">
+      <div class="settings-card">
+        <label for="inputCustomApiKey" class="input-label">
+          <span>Google Gemini API Key:</span>
+          <span class="label-hint">(Pilihan jika belum letak di config.js)</span>
+        </label>
+        <div class="input-group">
+          <input type="password" id="inputCustomApiKey" placeholder="AIzaSy..." autocomplete="off">
+          <button id="btnToggleKeyVisibility" class="btn-secondary-sm" type="button">👁️</button>
+        </div>
+        <div class="settings-actions">
+          <button id="btnSaveApiKey" class="btn-neon-sm">Simpan Kunci</button>
+          <button id="btnTestApiKey" class="btn-ghost-sm">Uji Sambungan</button>
+        </div>
+        <div id="apiKeyStatusMessage" class="status-msg"></div>
+      </div>
+    </section>
+
+    <!-- Bar Status Halaman Shopee -->
+    <section id="pageStatusBar" class="status-bar">
+      <div class="status-indicator">
+        <span id="statusDot" class="status-dot dot-checking"></span>
+        <span id="statusText" class="status-text">Memeriksa halaman semasa...</span>
+      </div>
+      <button id="btnRescrape" class="btn-mini-refresh" title="Imbas semula halaman" disabled>
+        🔄 Imbas
+      </button>
+    </section>
+
+    <!-- Notis Jika Bukan Halaman Shopee -->
+    <section id="notShopeeWarning" class="alert-box alert-warning hidden">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-content">
+        <h4>Bukan Halaman Produk Shopee</h4>
+        <p>Sila layari mana-mana halaman produk di <strong>shopee.com.my</strong> untuk mengaktifkan fungsi pengikis (scraper).</p>
+      </div>
+    </section>
+
+    <!-- Maklumat Produk Yang Dikesan -->
+    <section id="productPreviewSection" class="product-preview hidden">
+      <div class="card-glass">
+        <div class="product-header">
+          <span class="pill-label">Produk Dikesan</span>
+          <span id="scrapedTime" class="time-stamp">Tadi</span>
+        </div>
+        <h3 id="productTitleDisplay" class="product-title">Memuatkan tajuk produk...</h3>
+
+        <!-- Input Link Affiliate Pilihan Pengguna -->
+        <div class="affiliate-input-group">
+          <label for="inputAffiliateLink" class="input-label-xs">Link Affiliate Anda (Pilihan):</label>
+          <input type="url" id="inputAffiliateLink" placeholder="Tampal link affiliate Shopee anda di sini...">
+        </div>
+      </div>
+    </section>
+
+    <!-- Butang Utama Menjana Skrip -->
+    <section class="action-section">
+      <button id="btnGenerateScript" class="btn-primary-neon" disabled>
+        <span class="btn-icon-flash">⚡</span>
+        <span id="btnGenerateText">Jana Skrip Threads (3-Step)</span>
+      </button>
+    </section>
+
+    <!-- Keadaan Sedang Menjana (Loading Skeleton) -->
+    <section id="loadingSkeleton" class="loading-container hidden">
+      <div class="spinner-neon"></div>
+      <p class="loading-text">Gemini Flash AI sedang memerah idea gaya lepak mamak... ☕</p>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card short"></div>
+    </section>
+
+    <!-- Kotak Ralat Jika Ada -->
+    <section id="errorCard" class="alert-box alert-danger hidden">
+      <div class="alert-icon">❌</div>
+      <div class="alert-content">
+        <h4 id="errorTitle">Ralat Berlaku</h4>
+        <p id="errorMessage">Mesej ralat akan dipaparkan di sini.</p>
+      </div>
+    </section>
+
+    <!-- Keputusan Penjanaan Skrip Threads 3-Step -->
+    <main id="outputSection" class="output-container hidden">
+      <div class="output-header">
+        <div class="output-title-group">
+          <h2 class="section-title">Hasil Skrip Threads</h2>
+          <span id="savedTag" class="badge-saved hidden">Auto-Saved</span>
+        </div>
+        <div class="output-btn-group">
+          <button id="btnClearSaved" class="btn-clear-sm" title="Kosongkan skrip yang disimpan">
+            🗑️ Kosongkan
+          </button>
+          <button id="btnCopyAll" class="btn-copy-master" title="Salin semua 3 mesej sekaligus">
+            📋 Salin Semua
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 1: Hook -->
+      <article class="thread-step-card">
+        <div class="step-card-header">
+          <div class="step-meta">
+            <span class="step-badge step-1">Mesej 1</span>
+            <span class="step-title">🎣 Hook (Cerita Relatable)</span>
+          </div>
+          <button class="btn-copy-step" data-target="contentStep1" title="Salin Hook">
+            Salin
+          </button>
+        </div>
+        <div id="contentStep1" class="step-content"></div>
+      </article>
+
+      <!-- Step 2: Solution -->
+      <article class="thread-step-card">
+        <div class="step-card-header">
+          <div class="step-meta">
+            <span class="step-badge step-2">Mesej 2</span>
+            <span class="step-title">💡 Solution (Fungsi & Usikan)</span>
+          </div>
+          <button class="btn-copy-step" data-target="contentStep2" title="Salin Solution">
+            Salin
+          </button>
+        </div>
+        <div id="contentStep2" class="step-content"></div>
+      </article>
+
+      <!-- Step 3: CTA -->
+      <article class="thread-step-card">
+        <div class="step-card-header">
+          <div class="step-meta">
+            <span class="step-badge step-3">Mesej 3</span>
+            <span class="step-title">🚀 CTA (Direct & Mengusik)</span>
+          </div>
+          <button class="btn-copy-step" data-target="contentStep3" title="Salin CTA">
+            Salin
+          </button>
+        </div>
+        <div id="contentStep3" class="step-content"></div>
+      </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <span>Gaya Borak Mamak • Tiada Sebutan Harga • Racun Social</span>
+    </footer>
+
+    <!-- Toast Pemberitahuan Salin -->
+    <div id="toastNotification" class="toast hidden">
+      <span class="toast-icon">✓</span>
+      <span id="toastMessage">Teks disalin ke clipboard!</span>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

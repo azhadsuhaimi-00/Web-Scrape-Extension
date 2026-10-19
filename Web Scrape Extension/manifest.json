@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "Shopee to Threads Script Generator - Racun Social",
+  "version": "1.0.4",
+  "description": "Scrape produk Shopee Malaysia dan jana skrip pemasaran Threads 3-Step secara automatik menggunakan Google Gemini 1.5 Flash.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "clipboardWrite"
+  ],
+  "host_permissions": [
+    "https://shopee.com.my/*",
+    "https://*.shopee.com.my/*",
+    "https://generativelanguage.googleapis.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://shopee.com.my/*",
+        "https://*.shopee.com.my/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Shopee to Threads Generator",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
